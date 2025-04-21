@@ -39,27 +39,66 @@ def get_all_breeds():
     try:
         response = requests.get("https://dog.ceo/api/breeds/list/all")
         response.raise_for_status()
+        # print(response.data)
         data = response.json()
+        print(data)
         return data["message"]
     except requests.exceptions.RequestException:
         print("Error: Could not fetch breed list from API.")
-        return {}
+        return {data}
 
 def get_random_image(breed):
     """GET request to fetch a random image from a breed."""
     # TODO: Make a request to https://dog.ceo/api/breed/{breed}/images/random
     # TODO: Return the image URL or handle errors
+    try:
+        response = requests.get("https://dog.ceo/api/breed/{breed}/images/random")
+        response.raise_for_status()
+        data = response.json()
+        if data['status'] == 'success':
+            return data["message"]
+        else:
+            return f'Error: ocounld not find image for {breed}'
+    except requests.exceptions.RequestException:
+        print("Error: Could not fetch breed list from API.")
+        return {data}
     pass
 
 def get_random_sub_breed_image(breed, sub_breed):
     """GET request to fetch a random image from a sub-breed."""
     # TODO: Make a request to https://dog.ceo/api/breed/{breed}/{sub_breed}/images/random
     # TODO: Return the image URL or handle errors
+    try:
+        response = requests.get("https://dog.ceo/api/breed/{breed}/{sub_breed}/images/random")
+        response.raise_for_status()
+        data = response.json()
+        if data["status"] == "success":
+            return data["message"]
+        else:
+            return f"Error: Could not find images for sub-breed '{sub_breed}' of {breed}"
+    except requests.exceptions.RequestException:
+        print("Error: Could not fetch breed list from API.")
+        return {data}
     pass
 
 def show_breeds(breeds_dict):
     """Prints all available breeds 5 per line."""
     # TODO: Print all breeds (sorted), 5 per line
+    try:
+        response = requests.get("https://dog.ceo/api/breeds/list/all")
+        response.raise_for_status()
+        data = response.json()
+        breeds_dict = data["message"]
+        sorted_breeds = dict(sorted(breeds_dict.items()))
+        items = list(sorted_breeds.items())
+        for i in range(0, len(items), 5):
+            new_sorted_breeds = items[i:i+5]
+            new_line = " | ".join(f"{breed}: {sub_breeds}" for breed, sub_breeds in new_sorted_breeds)
+            print(new_line)
+        # return data["message"]
+    except requests.exceptions.RequestException:
+        print("Error: Could not fetch breed list from API.")
+        # return {data}
     pass
 
 def main():
